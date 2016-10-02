@@ -1,5 +1,7 @@
 package readit;
 
+import tts.TextToSpeech;
+import tts.OnlineTTS_VoiceRSS;
 import java.awt.AWTException;
 import java.awt.HeadlessException;
 import java.awt.Robot;
@@ -8,9 +10,7 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.KeyEvent;
-import java.io.File;
 import java.io.IOException;
-import java.util.concurrent.locks.LockSupport;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.scene.media.Media;
@@ -18,10 +18,10 @@ import javafx.scene.media.MediaPlayer;
 
 public class ReadIt {
 
-    static Media media;
     static MediaPlayer mediaPlayer;
 
     public static void main(String[] args) throws Exception {
+
         // release all modifier keys (alt, ctrl, shift)
         releaseAllModifierKeys();
 
@@ -32,10 +32,9 @@ public class ReadIt {
         String text = getStringFromClipboard();
 
         // Sent the string to tts engine to read it out
-        new Thread(() -> speakIt(text)).start();
-
+        // new Thread(() -> speakIt(text)).start();
         // display the user inteface
-        new UserInterface().display(args);
+        new UserInterface().display(args, text);
     }
 
     private static void releaseAllModifierKeys() throws AWTException {
@@ -62,29 +61,27 @@ public class ReadIt {
         }
     }
 
-    private static void speakIt(String text) {
-        try {
-            File file = File.createTempFile("speech", ".wav");
-            String fileName = file.getAbsolutePath();
-            Process proc = Runtime.getRuntime().exec(new String[]{
-                "pico2wave",
-                "-w", fileName,
-                text
-            });
-            proc.waitFor();
+    public static void speakIt(String text) {
 
-            media = new Media(file.toURI().toString());
-            mediaPlayer = new MediaPlayer(media);
-            mediaPlayer.play();
-        } catch (IOException | InterruptedException ex) {
-            LockSupport.parkNanos(1_000_000_000);
+        TextToSpeech tts = new OnlineTTS_VoiceRSS();
+
+        Media media = tts.getMedia(text).orElse(null);
+        if (media == null) {
             Platform.runLater(() -> {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setContentText("Unable to create speech from text!");
+                String errorMessage = "TTS Engine Name: " + tts.getEngineName() + "\n"
+                        + "Unable to create speech from text!\n"
+                        + tts.getErrorDetails();
+                System.out.println(errorMessage);
+                alert.setContentText(errorMessage);
                 alert.setTitle("TTS error");
                 alert.showAndWait();
                 System.exit(1);
             });
+
+        } else {
+            mediaPlayer = new MediaPlayer(media);
+            mediaPlayer.play();
         }
     }
 }

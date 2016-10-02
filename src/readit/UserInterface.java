@@ -1,9 +1,9 @@
 package readit;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.effect.Glow;
@@ -36,6 +36,8 @@ public class UserInterface extends Application {
     ImageView control;
     boolean mouseDragged = false;
 
+    static String textToSpeak;
+
     static {
         PAUSE_IMG = new Image(ReadIt.class
                 .getResourceAsStream(PAUSE_IMG_PATH));
@@ -45,12 +47,14 @@ public class UserInterface extends Application {
                 .getResourceAsStream(ICON_IMG_PATH));
     }
 
-    public void display(String[] args) {
+    public void display(String[] args, String textToSpeak) {
+        UserInterface.textToSpeak = textToSpeak;
         launch(args);
     }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        new Thread(() -> ReadIt.speakIt(textToSpeak)).start();
         control = new ImageView(PAUSE_IMG);
         control.setOnMouseEntered(e -> control.setEffect(new Glow(0.25)));
         control.setOnMouseExited(e -> control.setEffect(new Glow(0.0)));
@@ -154,14 +158,6 @@ public class UserInterface extends Application {
     }
 
     private void showAboutDialog() {
-        Alert aboutDialog = new Alert(Alert.AlertType.INFORMATION);
-        aboutDialog.setTitle("About");
-        aboutDialog.setHeaderText("About");
-        aboutDialog.setGraphic(new ImageView(ICON_IMG));
-        aboutDialog.setContentText(
-                "This is a convenient text to speech (TTS) program.\n"
-                + "Programmed by: \n"
-                + "Sourabh Bhat (heySourabh@gmail.com)");
-        aboutDialog.showAndWait();
+        new AboutDialog(ICON_IMG).showAndWait();
     }
 }
