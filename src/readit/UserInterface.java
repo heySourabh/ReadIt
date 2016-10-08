@@ -54,7 +54,6 @@ public class UserInterface extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        new Thread(() -> ReadIt.speakIt(textToSpeak)).start();
         control = new ImageView(PAUSE_IMG);
         control.setOnMouseEntered(e -> control.setEffect(new Glow(0.25)));
         control.setOnMouseExited(e -> control.setEffect(new Glow(0.0)));
@@ -76,6 +75,7 @@ public class UserInterface extends Application {
         primaryStage.getIcons().add(ICON_IMG);
         primaryStage.setTitle("Read It");
         primaryStage.show();
+        new Thread(() -> ReadIt.speakIt(textToSpeak)).start();
     }
 
     private void play() {

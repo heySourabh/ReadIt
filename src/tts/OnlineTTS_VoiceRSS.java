@@ -11,7 +11,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Scanner;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
 import java.util.prefs.Preferences;
+import javafx.application.Platform;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.media.Media;
 
@@ -30,19 +33,28 @@ public class OnlineTTS_VoiceRSS implements TextToSpeech {
             Preferences prefs = Preferences.userNodeForPackage(this.getClass());
             String keyKey = "key";
             String keyValue = prefs.get(keyKey, "not set");
-            if (keyValue.equals("not set")) {
+
+            FutureTask<String> getKeyTask = new FutureTask<>(() -> {
                 TextInputDialog getKeyDialog = new TextInputDialog();
+                getKeyDialog.setTitle("Enter key");
+                getKeyDialog.setHeaderText("Enter key for VoiceRSS TTS");
                 getKeyDialog.setContentText("Enter key");
                 Optional<String> result = getKeyDialog.showAndWait();
                 if (result.isPresent()) {
-                    keyValue = result.get();
-                    prefs.put(keyKey, result.get());
+                    return result.get();
                 } else {
                     throw new IllegalArgumentException(
                             "The key is required parameter for this TTS. "
                             + "You have to enter it only once.");
                 }
+            });
+
+            if (keyValue.equals("not set")) {
+                Platform.runLater(getKeyTask);
+                keyValue = getKeyTask.get();
+                prefs.put(keyKey, keyValue);
             }
+
             //prefs.remove(keyKey);
             text = URLEncoder.encode(text.replace("\n", ". "), "UTF-8");
             Map<String, String> params = new HashMap<>();
@@ -69,7 +81,8 @@ public class OnlineTTS_VoiceRSS implements TextToSpeech {
 
             Media media = new Media(file.toURI().toString());
             return Optional.of(media);
-        } catch (IOException | IllegalArgumentException ex) {
+        } catch (IOException | IllegalArgumentException |
+                ExecutionException | InterruptedException ex) {
             errorDetails = "Error: " + ex.toString();
             return Optional.empty();
         }
