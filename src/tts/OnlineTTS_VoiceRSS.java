@@ -17,6 +17,7 @@ import java.util.prefs.Preferences;
 import javafx.application.Platform;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.media.Media;
+import javafx.stage.Modality;
 
 public class OnlineTTS_VoiceRSS implements TextToSpeech {
 
@@ -30,32 +31,8 @@ public class OnlineTTS_VoiceRSS implements TextToSpeech {
     @Override
     public Optional<Media> getMedia(String text) {
         try {
-            Preferences prefs = Preferences.userNodeForPackage(this.getClass());
-            String keyKey = "key";
-            String keyValue = prefs.get(keyKey, "not set");
+            String keyValue = getApiKey();
 
-            FutureTask<String> getKeyTask = new FutureTask<>(() -> {
-                TextInputDialog getKeyDialog = new TextInputDialog();
-                getKeyDialog.setTitle("Enter key");
-                getKeyDialog.setHeaderText("Enter key for VoiceRSS TTS");
-                getKeyDialog.setContentText("Enter key");
-                Optional<String> result = getKeyDialog.showAndWait();
-                if (result.isPresent()) {
-                    return result.get();
-                } else {
-                    throw new IllegalArgumentException(
-                            "The key is required parameter for this TTS. "
-                            + "You have to enter it only once.");
-                }
-            });
-
-            if (keyValue.equals("not set")) {
-                Platform.runLater(getKeyTask);
-                keyValue = getKeyTask.get();
-                prefs.put(keyKey, keyValue);
-            }
-
-            //prefs.remove(keyKey);
             text = URLEncoder.encode(text.replace("\n", ". "), "UTF-8");
             Map<String, String> params = new HashMap<>();
             params.put("key", keyValue);
@@ -86,6 +63,39 @@ public class OnlineTTS_VoiceRSS implements TextToSpeech {
             errorDetails = "Error: " + ex.toString();
             return Optional.empty();
         }
+    }
+
+    private String getApiKey() throws InterruptedException, ExecutionException {
+        FutureTask<String> getKeyTask = new FutureTask<>(() -> {
+            TextInputDialog getKeyDialog = new TextInputDialog();
+            getKeyDialog.setTitle("Enter key");
+            getKeyDialog.setHeaderText("Enter key for VoiceRSS TTS");
+            getKeyDialog.setContentText("Enter key");
+            getKeyDialog.initModality(Modality.APPLICATION_MODAL);
+
+            Optional<String> result = getKeyDialog.showAndWait();
+
+            if (result.isPresent()) {
+                return result.get();
+            } else {
+                throw new IllegalArgumentException(
+                        "The key is a required parameter for this TTS. "
+                        + "You have to enter it only once.");
+            }
+        });
+
+        Preferences prefs = Preferences.userNodeForPackage(this.getClass());
+        String keyKey = "key";
+        String keyValue = prefs.get(keyKey, "not set");
+
+        if (keyValue.equals("not set")) {
+            Platform.runLater(getKeyTask);
+            keyValue = getKeyTask.get();
+            prefs.put(keyKey, keyValue);
+        }
+        //prefs.remove(keyKey);
+
+        return keyValue;
     }
 
     @Override
