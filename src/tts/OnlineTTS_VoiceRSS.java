@@ -33,7 +33,7 @@ public class OnlineTTS_VoiceRSS implements TextToSpeech {
         try {
             String keyValue = getApiKey();
 
-            text = URLEncoder.encode(text.replace("\n", ". "), "UTF-8");
+            text = URLEncoder.encode(text.replace("\n", " "), "UTF-8");
             Map<String, String> params = new HashMap<>();
             params.put("key", keyValue);
             params.put("src", text);

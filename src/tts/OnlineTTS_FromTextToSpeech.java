@@ -27,7 +27,7 @@ public class OnlineTTS_FromTextToSpeech implements TextToSpeech {
     @Override
     public Optional<Media> getMedia(String text) {
         try {
-            text = URLEncoder.encode(text.replace("\n", ". "), "UTF-8");
+            text = URLEncoder.encode(text.replace("\n", " "), "UTF-8");
             Map<String, String> params = new HashMap<>();
             params.put("language", "British English");
             params.put("voice", "IVONA Amy22 (UK English)");

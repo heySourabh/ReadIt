@@ -11,10 +11,15 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import tts.LocalTTS_Pico2Wave;
+import tts.OnlineTTS_FromTextToSpeech;
 
 public class ReadIt {
 
@@ -39,6 +44,7 @@ public class ReadIt {
 
     private static void releaseAllModifierKeys() throws AWTException {
         Robot robot = new Robot();
+        robot.delay(500);
         robot.keyRelease(KeyEvent.VK_ALT);
         robot.keyRelease(KeyEvent.VK_CONTROL);
         robot.keyRelease(KeyEvent.VK_SHIFT);
@@ -63,7 +69,13 @@ public class ReadIt {
 
     public static void speakIt(String text) {
 
-        TextToSpeech tts = new OnlineTTS_VoiceRSS();
+        List<TextToSpeech> ttsList = Arrays.asList(
+                new OnlineTTS_VoiceRSS(),
+                new OnlineTTS_FromTextToSpeech(),
+                new LocalTTS_Pico2Wave()
+        );
+
+        TextToSpeech tts = ttsList.get(0);
 
         Media media = tts.getMedia(text).orElse(null);
         if (media == null) {
