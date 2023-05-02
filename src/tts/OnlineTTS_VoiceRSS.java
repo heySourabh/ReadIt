@@ -2,6 +2,11 @@ package tts;
 
 import http.HTTPRequest;
 import http.HTTPResponse;
+import javafx.application.Platform;
+import javafx.scene.control.TextInputDialog;
+import javafx.scene.media.Media;
+import javafx.stage.Modality;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URLEncoder;
@@ -15,10 +20,6 @@ import java.util.Scanner;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 import java.util.prefs.Preferences;
-import javafx.application.Platform;
-import javafx.scene.control.TextInputDialog;
-import javafx.scene.media.Media;
-import javafx.stage.Modality;
 
 public class OnlineTTS_VoiceRSS implements TextToSpeech {
 
@@ -33,7 +34,9 @@ public class OnlineTTS_VoiceRSS implements TextToSpeech {
     public Optional<Media> getMedia(String text) {
         try {
             String keyValue = getApiKey();
-            text = text.replace("\n", " ");
+            text = text
+                    .replace("-\n", "")
+                    .replace("\n", " ");
 
             text = URLEncoder.encode(text, StandardCharsets.UTF_8);
             Map<String, String> params = new HashMap<>();
