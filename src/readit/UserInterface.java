@@ -1,7 +1,6 @@
 package readit;
 
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.ContextMenu;
@@ -16,6 +15,8 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
+
+import java.util.Objects;
 
 import static readit.ReadIt.mediaPlayer;
 
@@ -39,12 +40,12 @@ public class UserInterface extends Application {
     static String textToSpeak;
 
     static {
-        PAUSE_IMG = new Image(ReadIt.class
-                .getResourceAsStream(PAUSE_IMG_PATH));
-        PLAY_IMG = new Image(ReadIt.class
-                .getResourceAsStream(PLAY_IMG_PATH));
-        ICON_IMG = new Image(ReadIt.class
-                .getResourceAsStream(ICON_IMG_PATH));
+        PAUSE_IMG = new Image(Objects.requireNonNull(ReadIt.class
+                .getResourceAsStream(PAUSE_IMG_PATH)));
+        PLAY_IMG = new Image(Objects.requireNonNull(ReadIt.class
+                .getResourceAsStream(PLAY_IMG_PATH)));
+        ICON_IMG = new Image(Objects.requireNonNull(ReadIt.class
+                .getResourceAsStream(ICON_IMG_PATH)));
     }
 
     public void display(String[] args, String textToSpeak) {
@@ -53,14 +54,14 @@ public class UserInterface extends Application {
     }
 
     @Override
-    public void start(Stage primaryStage) throws Exception {
+    public void start(Stage primaryStage) {
         control = new ImageView(PAUSE_IMG);
         control.setOnMouseEntered(e -> control.setEffect(new Glow(0.25)));
         control.setOnMouseExited(e -> control.setEffect(new Glow(0.0)));
         control.setOnMousePressed(e -> mousePressed(e, primaryStage));
-        control.setOnMouseReleased(e -> mouseReleased(e));
+        control.setOnMouseReleased(this::mouseReleased);
         control.setOnMouseDragged(e -> mouseDragged(e, primaryStage));
-        control.setOnScroll(e -> mouseScrolled(e));
+        control.setOnScroll(this::mouseScrolled);
 
         Group container = new Group(control);
         Scene scene = new Scene(container, Color.TRANSPARENT);
