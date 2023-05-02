@@ -5,6 +5,7 @@ import http.HTTPResponse;
 import java.io.File;
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
@@ -21,7 +22,7 @@ import javafx.stage.Modality;
 
 public class OnlineTTS_VoiceRSS implements TextToSpeech {
 
-    String errorDetails = "No Error Occured";
+    String errorDetails = "No Error Occurred";
 
     @Override
     public String getEngineName() {
@@ -32,8 +33,9 @@ public class OnlineTTS_VoiceRSS implements TextToSpeech {
     public Optional<Media> getMedia(String text) {
         try {
             String keyValue = getApiKey();
+            text = text.replace("\n", " ");
 
-            text = URLEncoder.encode(text.replace("\n", " "), "UTF-8");
+            text = URLEncoder.encode(text, StandardCharsets.UTF_8);
             Map<String, String> params = new HashMap<>();
             params.put("key", keyValue);
             params.put("src", text);
@@ -60,7 +62,7 @@ public class OnlineTTS_VoiceRSS implements TextToSpeech {
             return Optional.of(media);
         } catch (IOException | IllegalArgumentException |
                 ExecutionException | InterruptedException ex) {
-            errorDetails = "Error: " + ex.toString();
+            errorDetails = "Error: " + ex;
             return Optional.empty();
         }
     }

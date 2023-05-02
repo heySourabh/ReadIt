@@ -1,25 +1,22 @@
 package readit;
 
-import tts.TextToSpeech;
-import tts.OnlineTTS_VoiceRSS;
-import java.awt.AWTException;
-import java.awt.HeadlessException;
-import java.awt.Robot;
-import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.UnsupportedFlavorException;
-import java.awt.event.KeyEvent;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import tts.LocalTTS_Pico2Wave;
 import tts.OnlineTTS_FromTextToSpeech;
+import tts.OnlineTTS_VoiceRSS;
+import tts.TextToSpeech;
+
+import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.awt.event.KeyEvent;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 public class ReadIt {
 
@@ -38,13 +35,13 @@ public class ReadIt {
 
         // Sent the string to tts engine to read it out
         // new Thread(() -> speakIt(text)).start();
-        // display the user inteface
+        // display the user interface
         new UserInterface().display(args, text);
     }
 
     private static void releaseAllModifierKeys() throws AWTException {
         Robot robot = new Robot();
-        robot.delay(500);
+        robot.delay(1000);
         robot.keyRelease(KeyEvent.VK_ALT);
         robot.keyRelease(KeyEvent.VK_CONTROL);
         robot.keyRelease(KeyEvent.VK_SHIFT);
