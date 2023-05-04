@@ -36,7 +36,8 @@ public class OnlineTTS_VoiceRSS implements TextToSpeech {
             String keyValue = getApiKey();
             text = text
                     .replace("-\n", "")
-                    .replace("\n", " ");
+                    .replace("\n", " ")
+                    .replaceAll("([A-Z])([A-Z])", "$1 $2 ");
 
             text = URLEncoder.encode(text, StandardCharsets.UTF_8);
             Map<String, String> params = new HashMap<>();
@@ -64,7 +65,7 @@ public class OnlineTTS_VoiceRSS implements TextToSpeech {
             Media media = new Media(file.toURI().toString());
             return Optional.of(media);
         } catch (IOException | IllegalArgumentException |
-                ExecutionException | InterruptedException ex) {
+                 ExecutionException | InterruptedException ex) {
             errorDetails = "Error: " + ex;
             return Optional.empty();
         }
@@ -78,15 +79,10 @@ public class OnlineTTS_VoiceRSS implements TextToSpeech {
             getKeyDialog.setContentText("Enter key");
             getKeyDialog.initModality(Modality.APPLICATION_MODAL);
 
-            Optional<String> result = getKeyDialog.showAndWait();
-
-            if (result.isPresent()) {
-                return result.get();
-            } else {
-                throw new IllegalArgumentException(
-                        "The key is a required parameter for this TTS. "
-                        + "You have to enter it only once.");
-            }
+            return getKeyDialog.showAndWait()
+                    .orElseThrow(() -> new IllegalArgumentException(
+                            "The key is a required parameter for this TTS. "
+                                    + "You have to enter it only once."));
         });
 
         Preferences prefs = Preferences.userNodeForPackage(this.getClass());
