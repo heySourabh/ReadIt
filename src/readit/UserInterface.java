@@ -1,6 +1,7 @@
 package readit;
 
 import javafx.application.Application;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.ContextMenu;
@@ -12,10 +13,12 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.paint.Color;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
 
+import java.awt.*;
 import java.util.Objects;
 
 import static readit.ReadIt.mediaPlayer;
@@ -75,8 +78,23 @@ public class UserInterface extends Application {
         primaryStage.setMaxHeight(PAUSE_IMG.getHeight());
         primaryStage.getIcons().add(ICON_IMG);
         primaryStage.setTitle("Read It");
-        primaryStage.show();
+        showOnCurrentScreen(primaryStage);
         new Thread(() -> ReadIt.speakIt(textToSpeak)).start();
+    }
+
+    private void showOnCurrentScreen(Stage stage) {
+        stage.show();
+        Point location = MouseInfo.getPointerInfo().getLocation();
+        Screen screen = Screen.getScreensForRectangle(location.getX(), location.getY(), 1, 1).get(0);
+        double stageWidth = stage.getWidth();
+        double stageHeight = stage.getHeight();
+        Rectangle2D visualBounds = screen.getVisualBounds();
+        double minX = visualBounds.getMinX();
+        double minY = visualBounds.getMinY();
+        double screenWidth = visualBounds.getWidth();
+        double screenHeight = visualBounds.getHeight();
+        stage.setX(minX + (screenWidth - stageWidth) / 2);
+        stage.setY(minY + (screenHeight - stageHeight) / 2);
     }
 
     private void play() {
