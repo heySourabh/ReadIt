@@ -24,6 +24,16 @@ public class ReadIt {
 
     public static void main(String[] args) throws Exception {
 
+        System.out.println("Arguments: " + Arrays.toString(args));
+        String text = args.length == 1 ? args[0] : getSelectedText();
+
+        // Sent the string to tts engine to read it out
+        // new Thread(() -> speakIt(text)).start();
+        // display the user interface
+        new UserInterface().display(args, text);
+    }
+
+    private static String getSelectedText() throws AWTException {
         // release all modifier keys (alt, ctrl, shift)
         releaseAllModifierKeys();
 
@@ -31,12 +41,7 @@ public class ReadIt {
         copySelection();
 
         // Get the string from clipboard
-        String text = getStringFromClipboard();
-
-        // Sent the string to tts engine to read it out
-        // new Thread(() -> speakIt(text)).start();
-        // display the user interface
-        new UserInterface().display(args, text);
+        return getStringFromClipboard();
     }
 
     private static void releaseAllModifierKeys() throws AWTException {

@@ -1,8 +1,8 @@
 package readit;
 
 import javafx.application.Application;
+import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
@@ -12,7 +12,12 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -66,16 +71,20 @@ public class UserInterface extends Application {
         control.setOnMouseDragged(e -> mouseDragged(e, primaryStage));
         control.setOnScroll(this::mouseScrolled);
 
-        Group container = new Group(control);
+        Text text = new Text(textToSpeak);
+        text.setFont(Font.font(12));
+        text.setTextAlignment(TextAlignment.JUSTIFY);
+        text.setWrappingWidth(2 * PAUSE_IMG.getWidth());
+        text.setFill(Color.BLUE);
+        VBox container = new VBox(control, text);
+        container.setAlignment(Pos.CENTER);
+        container.setBackground(Background.fill(Color.TRANSPARENT));
         Scene scene = new Scene(container, Color.TRANSPARENT);
         primaryStage.initStyle(StageStyle.TRANSPARENT);
 
         primaryStage.setScene(scene);
+        primaryStage.sizeToScene();
         primaryStage.setAlwaysOnTop(true);
-        primaryStage.setMinWidth(PAUSE_IMG.getWidth());
-        primaryStage.setMaxWidth(PAUSE_IMG.getWidth());
-        primaryStage.setMinHeight(PAUSE_IMG.getHeight());
-        primaryStage.setMaxHeight(PAUSE_IMG.getHeight());
         primaryStage.getIcons().add(ICON_IMG);
         primaryStage.setTitle("Read It");
         showOnCurrentScreen(primaryStage);
