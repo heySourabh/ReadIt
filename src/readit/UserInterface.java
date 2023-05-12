@@ -1,6 +1,7 @@
 package readit;
 
 import javafx.application.Application;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
@@ -13,6 +14,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.Background;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -76,7 +78,12 @@ public class UserInterface extends Application {
         text.setTextAlignment(TextAlignment.JUSTIFY);
         text.setWrappingWidth(2 * PAUSE_IMG.getWidth());
         text.setFill(Color.BLUE);
-        VBox container = new VBox(control, text);
+        HBox textContainer = new HBox();
+        textContainer.setPadding(new Insets(10));
+        textContainer.setBackground(Background.fill(Color.WHITE));
+        textContainer.getChildren().addAll(text);
+
+        VBox container = new VBox(control, textContainer);
         container.setAlignment(Pos.CENTER);
         container.setBackground(Background.fill(Color.TRANSPARENT));
         Scene scene = new Scene(container, Color.TRANSPARENT);
