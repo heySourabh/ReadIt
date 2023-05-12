@@ -27,6 +27,8 @@ public class ReadIt {
         System.out.println("Arguments: " + Arrays.toString(args));
         String text = args.length == 1 ? args[0] : getSelectedText();
 
+        if (text.length() < 5) return;
+
         // Sent the string to tts engine to read it out
         // new Thread(() -> speakIt(text)).start();
         // display the user interface
