@@ -67,7 +67,7 @@ public class UserInterface extends Application {
         control.setOnMouseEntered(e -> control.setEffect(new Glow(0.25)));
         control.setOnMouseExited(e -> control.setEffect(new Glow(0.0)));
         control.setOnMousePressed(e -> mousePressed(e, primaryStage));
-        control.setOnMouseReleased(this::mouseReleased);
+        control.setOnMouseReleased(e1 -> mouseReleased(e1, primaryStage));
         control.setOnMouseDragged(e -> mouseDragged(e, primaryStage));
         control.setOnScroll(this::mouseScrolled);
 
@@ -126,7 +126,7 @@ public class UserInterface extends Application {
     }
 
     private void mousePressed(MouseEvent e, Stage stage) {
-        getContextMenu().hide();
+        getContextMenu(stage).hide();
         if (e.getButton() != MouseButton.PRIMARY) {
             return;
         }
@@ -136,9 +136,9 @@ public class UserInterface extends Application {
         mouseLocY = stage.getY() - e.getScreenY();
     }
 
-    private void mouseReleased(MouseEvent e) {
+    private void mouseReleased(MouseEvent e, Stage stage) {
         if (e.getButton() == MouseButton.SECONDARY) {
-            getContextMenu().show(control, e.getScreenX(), e.getScreenY());
+            getContextMenu(stage).show(stage, e.getScreenX(), e.getScreenY());
         }
         if (e.getButton() != MouseButton.PRIMARY) {
             return;
@@ -173,19 +173,20 @@ public class UserInterface extends Application {
 
     ContextMenu menu;
 
-    private ContextMenu getContextMenu() {
+    private ContextMenu getContextMenu(Stage stage) {
         if (menu == null) {
             MenuItem exitItem = new MenuItem("Exit");
             exitItem.setOnAction(e -> System.exit(0));
 
             MenuItem aboutItem = new MenuItem("About...");
-            aboutItem.setOnAction(e -> showAboutDialog());
+            aboutItem.setOnAction(e -> showAboutDialog(stage));
             menu = new ContextMenu(aboutItem, exitItem);
         }
         return menu;
     }
 
-    private void showAboutDialog() {
-        new AboutDialog(ICON_IMG).showAndWait();
+    private void showAboutDialog(Stage stage) {
+        getContextMenu(stage).hide();
+        new AboutDialog(stage, ICON_IMG).showAndWait();
     }
 }

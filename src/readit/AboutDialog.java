@@ -16,7 +16,8 @@ import javafx.stage.StageStyle;
 
 public class AboutDialog extends Stage {
 
-    public AboutDialog(Image image) {
+    public AboutDialog(Stage stage, Image image) {
+        initOwner(stage);
         initModality(Modality.APPLICATION_MODAL);
         setAlwaysOnTop(true);
         initStyle(StageStyle.UTILITY);
@@ -25,8 +26,7 @@ public class AboutDialog extends Stage {
         ImageView appIcon = new ImageView(image);
         WebView infoView = new WebView();
         infoView.setPrefSize(500, 300);
-        infoView.getEngine().loadContent(""
-                + "<html><body>"
+        infoView.getEngine().loadContent("<html><body>"
                 + "<h1>About</h1>"
                 + "<p>This is a convenient text to speech (TTS) program.</p>"
                 + "<p>To use the program set a shortcut key combination to launch "
