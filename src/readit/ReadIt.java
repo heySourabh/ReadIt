@@ -96,6 +96,7 @@ public class ReadIt {
             });
 
         } else {
+            System.out.println("Received audio file from TTS.");
             mediaPlayer = new MediaPlayer(media);
             mediaPlayer.play();
         }
