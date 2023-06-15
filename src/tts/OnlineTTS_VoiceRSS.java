@@ -44,7 +44,7 @@ public class OnlineTTS_VoiceRSS implements TextToSpeech {
             params.put("key", keyValue);
             params.put("src", text);
             params.put("hl", "en-gb");
-            params.put("v", "Harry");
+            params.put("v", "Lily");
             params.put("r", "0");
             params.put("c", "WAV");
             params.put("f", "32khz_16bit_mono");

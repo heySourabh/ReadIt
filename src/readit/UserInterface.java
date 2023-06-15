@@ -10,9 +10,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.effect.Glow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.input.ScrollEvent;
+import javafx.scene.input.*;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -90,6 +88,7 @@ public class UserInterface extends Application {
         primaryStage.initStyle(StageStyle.TRANSPARENT);
 
         primaryStage.setScene(scene);
+        scene.setOnKeyReleased(this::keyEvent);
         primaryStage.sizeToScene();
         primaryStage.setAlwaysOnTop(true);
         primaryStage.getIcons().add(ICON_IMG);
@@ -132,6 +131,14 @@ public class UserInterface extends Application {
         playing = false;
     }
 
+    private void togglePlay() {
+        if (playing) {
+            pause();
+        } else {
+            play();
+        }
+    }
+
     private void mousePressed(MouseEvent e, Stage stage) {
         getContextMenu(stage).hide();
         if (e.getButton() != MouseButton.PRIMARY) {
@@ -154,11 +161,7 @@ public class UserInterface extends Application {
         if (mouseDragged) {
             return;
         }
-        if (playing) {
-            pause();
-        } else {
-            play();
-        }
+        togglePlay();
     }
 
     private void mouseDragged(MouseEvent e, Stage stage) {
@@ -176,6 +179,21 @@ public class UserInterface extends Application {
     private void mouseScrolled(ScrollEvent e) {
         double direction = Math.signum(e.getDeltaY());
         mediaPlayer.seek(mediaPlayer.getCurrentTime().add(Duration.seconds(direction * 0.5)));
+    }
+
+    private void keyEvent(KeyEvent keyEvent) {
+        if (keyEvent.getCode() == KeyCode.HOME) {
+            mediaPlayer.seek(Duration.ZERO);
+        }
+        if (keyEvent.getCode() == KeyCode.SPACE) {
+            togglePlay();
+        }
+        if (keyEvent.getCode() == KeyCode.RIGHT) {
+            mediaPlayer.seek(mediaPlayer.getCurrentTime().add(Duration.seconds(2)));
+        }
+        if (keyEvent.getCode() == KeyCode.LEFT) {
+            mediaPlayer.seek(mediaPlayer.getCurrentTime().add(Duration.seconds(-2)));
+        }
     }
 
     ContextMenu menu;
